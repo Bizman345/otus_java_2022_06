@@ -1,0 +1,15 @@
+plugins {
+    id "application"
+    id 'java'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+application {
+    mainClassName = "ru.otus.handler.AnnotationHandler"
+}
+
+dependencies {
+
+}

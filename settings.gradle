@@ -1,0 +1,6 @@
+rootProject.name = 'otusJava'
+
+
+include 'hw06-annotations'
+include 'hw01-gradle'
+
