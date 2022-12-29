@@ -6,8 +6,14 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TestProxy {
+
+    private static final Map<String, Method> methodMap = new HashMap<>();
 
     public TestProxy() {
     }
@@ -19,23 +25,22 @@ public class TestProxy {
     }
 
     static class TestLoggingHandler implements InvocationHandler {
-        private TestLoggingInterface originalObject;
+        private final TestLoggingInterface originalObject;
 
         public TestLoggingHandler(TestLoggingInterface originalObject) {
             this.originalObject = originalObject;
+            if (methodMap.size() == 0) {
+                Arrays.stream(originalObject.getClass().getMethods()).forEach(method -> methodMap.put(buildMethodString(method), method));
+            }
+        }
+
+        private String buildMethodString(Method method) {
+            return method.getName() + Arrays.stream(method.getParameterTypes()).map(Class::getName).collect(Collectors.toList());
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            Method originalMethod;
-            Class originalClass = originalObject.getClass();
-            Class[] parameterTypes = method.getParameterTypes();
-
-            if (parameterTypes.length == 0) {
-                originalMethod = originalClass.getMethod(method.getName());
-            } else {
-                originalMethod = originalClass.getMethod(method.getName(), parameterTypes);
-            }
+            Method originalMethod = methodMap.get(buildMethodString(method));
             if (originalMethod.isAnnotationPresent(Log.class)) {
                 StringBuilder builder = new StringBuilder("executed method: " + method.getName());
 
