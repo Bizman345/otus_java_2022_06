@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class TestProxy {
 
-    private static final Map<String, Method> methodMap = new HashMap<>();
+    private static final Map<String, Parameter[]> methodMap = new HashMap<>();
 
     public TestProxy() {
     }
@@ -30,7 +30,11 @@ public class TestProxy {
         public TestLoggingHandler(TestLoggingInterface originalObject) {
             this.originalObject = originalObject;
             if (methodMap.size() == 0) {
-                Arrays.stream(originalObject.getClass().getMethods()).forEach(method -> methodMap.put(buildMethodString(method), method));
+                Arrays.stream(originalObject.getClass().getMethods()).forEach(method -> {
+                    if (method.isAnnotationPresent(Log.class)) {
+                        methodMap.put(buildMethodString(method), method.getParameters());
+                    }
+                });
             }
         }
 
@@ -40,17 +44,17 @@ public class TestProxy {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            Method originalMethod = methodMap.get(buildMethodString(method));
-            if (originalMethod.isAnnotationPresent(Log.class)) {
+            Parameter[] parameters = methodMap.get(buildMethodString(method));
+            if (parameters != null) {
                 StringBuilder builder = new StringBuilder("executed method: " + method.getName());
 
-                Parameter[] parameters = method.getParameters();
                 for (int i = 0; i < parameters.length; i++) {
                     builder.append(", " + parameters[i].getName() + ": " + args[i]);
                 }
+
                 System.out.println(builder);
             }
-            return originalMethod.invoke(originalObject, args);
+            return method.invoke(originalObject, args);
         }
     }
 }
