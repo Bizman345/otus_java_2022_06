@@ -56,7 +56,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T>{
         return fieldsWithoutId;
     }
 
-    private static List<Field> findFieldWithGetAndSet(List<Field> fields, List<Method> methods) {
+    private List<Field> findFieldWithGetAndSet(List<Field> fields, List<Method> methods) {
         return fields.stream().filter(field -> {
             Boolean getter = false;
             Boolean setter = false;
@@ -78,19 +78,19 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T>{
         }).collect(Collectors.toList());
     }
 
-    private static Field findIdAnnotation(List<Field> fields) {
+    private Field findIdAnnotation(List<Field> fields) {
         return fields.stream().filter(field -> field.isAnnotationPresent(Id.class)).findFirst().orElseThrow(() -> new RuntimeException("No @id annotatied field"));
     }
 
-    private static List<Field> findFieldsWithoutIdAnnotation(List<Field> fields) {
+    private List<Field> findFieldsWithoutIdAnnotation(List<Field> fields) {
         return fields.stream().filter(field -> !field.isAnnotationPresent(Id.class)).collect(Collectors.toList());
     }
 
-    private static Boolean isMethodName(Method method, String name) {
+    private Boolean isMethodName(Method method, String name) {
         return method.getName().equalsIgnoreCase(name);
     }
 
-    private static String concatinate(String str, Field field) {
+    private String concatinate(String str, Field field) {
         return str + field.getName();
     }
 }
