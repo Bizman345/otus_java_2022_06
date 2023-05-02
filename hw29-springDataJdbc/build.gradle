@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.6.8'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+dependencies {
+    implementation ('org.projectlombok:lombok')
+    annotationProcessor ('org.projectlombok:lombok')
+    implementation ('ch.qos.logback:logback-classic')
+    implementation ('org.flywaydb:flyway-core')
+    implementation ('org.postgresql:postgresql')
+
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation ('org.springframework.boot:spring-boot-starter-data-jdbc:2.6.8')
+
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.with {
+        encoding = 'UTF-8'
+    }
+}
